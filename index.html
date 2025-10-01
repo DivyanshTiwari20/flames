@@ -313,8 +313,13 @@
             ctx.textAlign = 'center';
             ctx.fillText(resultData.emoji, 540, 480);
 
-            // Draw names with highlighted background
-            ctx.font = 'bold 75px Arial';
+            // ============================================
+            // NAMES SECTION - CUSTOMIZE HERE
+            // ============================================
+            
+            // Set font for names - CHANGE FONT HERE
+            ctx.font = 'bold 75px Arial';  // Change 'Arial' to your preferred font
+            
             const name1 = currentNames.name1;
             const name2 = currentNames.name2;
             const andText = ' & ';
@@ -326,26 +331,32 @@
             
             const startX = 540 - totalWidth / 2;
             
-            // Highlight for name1
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            // BACKGROUND COLOR FOR NAME BOXES - CHANGE OR REMOVE THIS SECTION
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';  // Change color here (white with 95% opacity)
+            
+            // Highlight box for name1
             roundRect(ctx, startX - 25, 570, name1Width + 50, 95, 15);
             ctx.fill();
             
-            // Highlight for name2
+            // Highlight box for name2
             roundRect(ctx, startX + name1Width + andWidth - 25, 570, name2Width + 50, 95, 15);
             ctx.fill();
             
-            // Draw names text
-            ctx.fillStyle = '#1a1a1a';
+            // NAMES TEXT COLOR - CHANGE COLOR HERE
+            ctx.fillStyle = '#1a1a1a';  // Change this color for name text (dark gray/black)
             ctx.fillText(name1, startX + name1Width / 2, 645);
             
-            // Draw "&" without highlight
+            // Draw "&" symbol
             ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
             ctx.fillText(andText, startX + name1Width + andWidth / 2, 645);
             
             // Draw name2
-            ctx.fillStyle = '#1a1a1a';
+            ctx.fillStyle = '#1a1a1a';  // Change this color for name text
             ctx.fillText(name2, startX + name1Width + andWidth + name2Width / 2, 645);
+            
+            // ============================================
+            // END OF NAMES SECTION
+            // ============================================
 
             // Draw "are" text
             ctx.font = '55px Arial';
