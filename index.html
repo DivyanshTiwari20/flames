@@ -180,27 +180,36 @@
                 return;
             }
 
+            // Create arrays of characters
             let str1 = name1.split('');
             let str2 = name2.split('');
 
-            for (let i = 0; i < str1.length; i++) {
-                const index = str2.indexOf(str1[i]);
-                if (index !== -1) {
-                    str2.splice(index, 1);
-                    str1.splice(i, 1);
-                    i--;
+            // Remove common characters
+            for (let char of name1) {
+                const index1 = str1.indexOf(char);
+                const index2 = str2.indexOf(char);
+                
+                if (index1 !== -1 && index2 !== -1) {
+                    str1.splice(index1, 1);
+                    str2.splice(index2, 1);
                 }
             }
 
+            // Count remaining letters
             const count = str1.length + str2.length;
+
+            // FLAMES elimination process
             const flames = ['F', 'L', 'A', 'M', 'E', 'S'];
-            let index = 0;
+            let currentIndex = 0;
 
             while (flames.length > 1) {
-                index = (index + count - 1) % flames.length;
-                flames.splice(index, 1);
-                if (index === flames.length) {
-                    index = 0;
+                // Count 'count' positions and eliminate
+                currentIndex = (currentIndex + count - 1) % flames.length;
+                flames.splice(currentIndex, 1);
+                
+                // Adjust index after removal
+                if (currentIndex >= flames.length && flames.length > 0) {
+                    currentIndex = 0;
                 }
             }
 
