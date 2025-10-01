@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLAMES Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding-top: 40px;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 17px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus {
+            border-color: #000;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: opacity 0.2s;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        .result {
+            margin-top: 40px;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .result-emoji {
+            font-size: 5em;
+            margin-bottom: 16px;
+        }
+
+        .result-text {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-description {
+            font-size: 1em;
+            color: #666;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding-top: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+
+            .result-emoji {
+                font-size: 4em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💕 FLAMES</h1>
+
+        <div class="input-group">
+            <input type="text" id="name1" placeholder="your name">
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="name2" placeholder="their name">
+        </div>
+
+        <button onclick="calculateFlames()">find out</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const flamesData = {
+            'F': { 
+                emoji: '👫', 
+                text: 'friends', 
+                description: 'you guys are gonna be besties'
+            },
+            'L': { 
+                emoji: '💑', 
+                text: 'lovers', 
+                description: 'love is in the air!'
+            },
+            'A': { 
+                emoji: '🥰', 
+                text: 'affectionate', 
+                description: 'aww so sweet together'
+            },
+            'M': { 
+                emoji: '💍', 
+                text: 'marriage', 
+                description: 'wedding bells incoming!'
+            },
+            'E': { 
+                emoji: '😤', 
+                text: 'enemies', 
+                description: 'oof... not the best match'
+            },
+            'S': { 
+                emoji: '👨‍👩‍👧‍👦', 
+                text: 'siblings', 
+                description: 'like brother and sister vibes'
+            }
+        };
+
+        function calculateFlames() {
+            const name1 = document.getElementById('name1').value.toLowerCase().replace(/\s/g, '');
+            const name2 = document.getElementById('name2').value.toLowerCase().replace(/\s/g, '');
+
+            if (!name1 || !name2) {
+                alert('enter both names!');
+                return;
+            }
+
+            let str1 = name1.split('');
+            let str2 = name2.split('');
+
+            for (let i = 0; i < str1.length; i++) {
+                const index = str2.indexOf(str1[i]);
+                if (index !== -1) {
+                    str2.splice(index, 1);
+                    str1.splice(i, 1);
+                    i--;
+                }
+            }
+
+            const count = str1.length + str2.length;
+            const flames = ['F', 'L', 'A', 'M', 'E', 'S'];
+            let index = 0;
+
+            while (flames.length > 1) {
+                index = (index + count - 1) % flames.length;
+                flames.splice(index, 1);
+                if (index === flames.length) {
+                    index = 0;
+                }
+            }
+
+            const result = flames[0];
+            const resultData = flamesData[result];
+
+            document.getElementById('result').innerHTML = `
+                <div class="result">
+                    <div class="result-emoji">${resultData.emoji}</div>
+                    <div class="result-text">${resultData.text}</div>
+                    <div class="result-description">${resultData.description}</div>
+                </div>
+            `;
+        }
+
+        document.getElementById('name2').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFlames();
+            }
+        });
+    </script>
+</body>
+</html>
