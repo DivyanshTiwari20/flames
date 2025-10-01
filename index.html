@@ -93,6 +93,69 @@
             color: #666;
         }
 
+        .share-button {
+            width: 100%;
+            padding: 16px;
+            background: #fff;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+
+        .share-button:active {
+            background: #000;
+            color: #fff;
+        }
+
+        #shareCard {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .share-card {
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .share-card-emoji {
+            font-size: 200px;
+            margin-bottom: 40px;
+        }
+
+        .share-card-title {
+            font-size: 120px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-transform: lowercase;
+        }
+
+        .share-card-names {
+            font-size: 60px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .share-card-branding {
+            font-size: 40px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: auto;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -137,39 +200,51 @@
         <div id="result"></div>
     </div>
 
+    <canvas id="shareCard"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
         const flamesData = {
             'F': { 
                 emoji: '👫', 
                 text: 'friends', 
-                description: 'you guys are gonna be besties'
+                description: 'you guys are gonna be besties',
+                gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
             },
             'L': { 
                 emoji: '💑', 
                 text: 'lovers', 
-                description: 'love is in the air!'
+                description: 'love is in the air!',
+                gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
             },
             'A': { 
                 emoji: '🥰', 
                 text: 'affectionate', 
-                description: 'aww so sweet together'
+                description: 'aww so sweet together',
+                gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)'
             },
             'M': { 
                 emoji: '💍', 
                 text: 'marriage', 
-                description: 'wedding bells incoming!'
+                description: 'wedding bells incoming!',
+                gradient: 'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)'
             },
             'E': { 
                 emoji: '😤', 
                 text: 'enemies', 
-                description: 'oof... not the best match'
+                description: 'oof... not the best match',
+                gradient: 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)'
             },
             'S': { 
                 emoji: '👨‍👩‍👧‍👦', 
                 text: 'siblings', 
-                description: 'like brother and sister vibes'
+                description: 'like brother and sister vibes',
+                gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
             }
         };
+
+        let currentResult = null;
+        let currentNames = { name1: '', name2: '' };
 
         function calculateFlames() {
             const name1 = document.getElementById('name1').value.toLowerCase().replace(/\s/g, '');
@@ -216,13 +291,89 @@
             const result = flames[0];
             const resultData = flamesData[result];
 
+            currentResult = result;
+            currentNames.name1 = document.getElementById('name1').value;
+            currentNames.name2 = document.getElementById('name2').value;
+
             document.getElementById('result').innerHTML = `
                 <div class="result">
                     <div class="result-emoji">${resultData.emoji}</div>
                     <div class="result-text">${resultData.text}</div>
                     <div class="result-description">${resultData.description}</div>
+                    <button class="share-button" onclick="shareResult()">share result 📤</button>
                 </div>
             `;
+        }
+
+        async function shareResult() {
+            const resultData = flamesData[currentResult];
+            const canvas = document.getElementById('shareCard');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = 1080;
+            canvas.height = 1080;
+
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 1080, 1080);
+            const gradientColors = resultData.gradient.match(/#[a-fA-F0-9]{6}/g);
+            if (gradientColors && gradientColors.length >= 2) {
+                gradient.addColorStop(0, gradientColors[0]);
+                gradient.addColorStop(1, gradientColors[1]);
+            } else {
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(1, '#764ba2');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1080, 1080);
+
+            // Draw emoji
+            ctx.font = '200px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(resultData.emoji, 540, 400);
+
+            // Draw result text
+            ctx.font = 'bold 120px Arial';
+            ctx.fillStyle = 'white';
+            ctx.fillText(resultData.text, 540, 570);
+
+            // Draw names
+            ctx.font = '60px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            const namesText = `${currentNames.name1} & ${currentNames.name2}`;
+            ctx.fillText(namesText, 540, 680);
+
+            // Draw branding
+            ctx.font = '40px Arial';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillText('💕 FLAMES', 540, 950);
+
+            // Convert to blob and share
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'flames-result.png', { type: 'image/png' });
+                
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'FLAMES Result',
+                            text: `${currentNames.name1} & ${currentNames.name2} are ${resultData.text}! 💕`
+                        });
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            downloadImage(canvas);
+                        }
+                    }
+                } else {
+                    downloadImage(canvas);
+                }
+            });
+        }
+
+        function downloadImage(canvas) {
+            const link = document.createElement('a');
+            link.download = 'flames-result.png';
+            link.href = canvas.toDataURL();
+            link.click();
         }
 
         document.getElementById('name2').addEventListener('keypress', function(e) {
